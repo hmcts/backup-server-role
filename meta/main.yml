@@ -1,0 +1,11 @@
+galaxy_info:
+  author: HMCTS Reform
+  description: Backup Server
+  company: HMCTS Reform
+
+  license: MIT
+
+  min_ansible_version: 2.1
+
+dependencies:
+  - { role: devops.repos }

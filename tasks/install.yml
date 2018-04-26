@@ -1,0 +1,11 @@
+---
+
+- name: Install rsnapshot
+  package:
+    name: rsnapshot
+    state: installed
+
+- name: Install cronie
+  package:
+    name: cronie
+    state: installed

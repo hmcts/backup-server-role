@@ -1,0 +1,43 @@
+---
+
+- name: Create a SSH key for backup user
+  user:
+    name: "{{ rsnapshot_user }}"
+    generate_ssh_key: yes
+    ssh_key_file: .ssh/{{ rsnapshot_ssh_key }}
+  when: rsnapshot_ssh_key != False
+  tags:
+    - rsnapshot_config_ssh
+
+- name: Configure rsnapshot
+  template:
+    src: rsnapshot.conf.j2
+    dest: "{{ rsnapshot_config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  tags:
+    - rsnapshot_config_file
+
+- name: Configure cron (environment variables)
+  cron:
+    cron_file: ansible_rsnapshot
+    user: root
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    env: yes
+  with_dict: "{{ rsnapshot_crontab_env }}"
+
+- name: Configure cron
+  cron:
+    name: "{{ item.name }}"
+    user: root
+    cron_file: ansible_rsnapshot
+    month: "{{ item.get('month', '*') }}"
+    weekday: "{{ item.get('weekday', '*') }}"
+    day: "{{ item.get('day', '*') }}"
+    hour: "{{ item.get('hour', '*') }}"
+    minute: "{{ item.get('minute', '*') }}"
+    job: "{{ item.get('job', '*') }}"
+  with_items: "{{ rsnapshot_crontab }}"

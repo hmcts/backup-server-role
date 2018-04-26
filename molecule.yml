@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+  requirements_file: requirements.yml
+driver:
+  name: docker
+docker:
+  containers:
+    - name: backup-server-role-${BRANCH_NAME}-${BUILD_NUMBER}
+      image: centos/systemd
+      image_version: latest
+      privileged: yes
+      cap_add:
+        - SYS_ADMIN
+      ansible_groups:
+        - backupserver
+      environment:
+        http_proxy: ${http_proxy}
+verifier:
+  name: testinfra
